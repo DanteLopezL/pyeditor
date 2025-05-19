@@ -216,7 +216,6 @@ class LoginWindow:
         main_frame.update()
         self.window.update_idletasks()
 
-        # Final lift to front
         self.window.lift()
         self.window.focus_force()
 
@@ -273,16 +272,13 @@ class FileEditor:
         self.root.title("File Editor - Please Login")
         self.root.geometry("800x600")
 
-        # Mac-specific fixes for main window
         self.root.configure(bg="white")
 
         self.current_file = None
         self.current_user = None
 
-        # Hide main window initially
         self.root.withdraw()
 
-        # Show login window
         LoginWindow(self.root, self.on_login_success)
 
     def on_login_success(self, username):
@@ -290,7 +286,6 @@ class FileEditor:
         self.root.title(f"File Editor - Welcome {username}")
         self.root.deiconify()
 
-        # Bring main window to front after login
         self.root.lift()
         self.root.attributes("-topmost", True)
         self.root.after_idle(self.root.attributes, "-topmost", False)
@@ -298,11 +293,9 @@ class FileEditor:
         self.setup_ui()
 
     def setup_ui(self):
-        # Clear any existing widgets
         for widget in self.root.winfo_children():
             widget.destroy()
 
-        # Menu bar
         self.menu_bar = tk.Menu(self.root)
         self.file_menu = tk.Menu(self.menu_bar, tearoff=0)
         self.file_menu.add_command(label="New", command=self.new_file)
@@ -313,7 +306,6 @@ class FileEditor:
         self.file_menu.add_command(label="Exit", command=self.root.quit)
         self.menu_bar.add_cascade(label="File", menu=self.file_menu)
 
-        # Account menu
         account_menu = tk.Menu(self.menu_bar, tearoff=0)
         account_menu.add_command(label="User Info", command=self.show_user_info)
         account_menu.add_command(label="Logout", command=self.logout)
@@ -321,7 +313,6 @@ class FileEditor:
 
         self.root.config(menu=self.menu_bar)
 
-        # Text area with frame
         text_frame = tk.Frame(self.root)
         text_frame.pack(expand=True, fill=tk.BOTH, padx=5, pady=5)
 
@@ -335,7 +326,6 @@ class FileEditor:
         )
         self.text_area.pack(expand=True, fill=tk.BOTH)
 
-        # Status bar
         self.status_bar = tk.Label(
             self.root,
             text=f"Ready - Logged in as: {self.current_user}",
@@ -370,9 +360,7 @@ class FileEditor:
             self.root.withdraw()
             self.current_user = None
             self.current_file = None
-            # Clear the menu
             self.root.config(menu=tk.Menu(self.root))
-            # Show login window again
             LoginWindow(self.root, self.on_login_success)
 
     def open_file(self):
@@ -404,7 +392,6 @@ class FileEditor:
         try:
             with open(self.current_file, "w", encoding="utf-8") as file:
                 content = self.text_area.get(1.0, tk.END)
-                # Remove the extra newline that tkinter adds
                 if content.endswith("\n"):
                     content = content[:-1]
                 file.write(content)
@@ -433,9 +420,7 @@ class FileEditor:
 def main():
     root = tk.Tk()
 
-    # Mac-specific root window setup
     try:
-        # Enable Mac-specific features if available
         root.createcommand("::tk::mac::ShowPreferences", lambda: None)
     except Exception as e:
         print(f"Failed due to {e}")
