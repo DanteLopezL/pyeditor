@@ -14,7 +14,7 @@ class FileEditor:
         self.current_file = None
         self.current_user = None
 
-        self.root.withdraw()  # Hide main window until login is successful
+        self.root.withdraw()
 
         LoginWindow(self.root, self.on_login_success)
 
@@ -35,7 +35,6 @@ class FileEditor:
 
         self.menu_bar = tk.Menu(self.root)
 
-        # File menu
         self.file_menu = tk.Menu(self.menu_bar, tearoff=0)
         self.file_menu.add_command(label="New", command=self.new_file)
         self.file_menu.add_command(label="Open", command=self.open_file)
@@ -45,20 +44,17 @@ class FileEditor:
         self.file_menu.add_command(label="Exit", command=self.root.quit)
         self.menu_bar.add_cascade(label="File", menu=self.file_menu)
 
-        # Account menu
         account_menu = tk.Menu(self.menu_bar, tearoff=0)
         account_menu.add_command(label="User Info", command=self.show_user_info)
         account_menu.add_command(label="Logout", command=self.logout)
         self.menu_bar.add_cascade(label="Account", menu=account_menu)
 
-        # Help menu
         help_menu = tk.Menu(self.menu_bar, tearoff=0)
         help_menu.add_command(label="About System", command=self.open_about_window)
         self.menu_bar.add_cascade(label="Help", menu=help_menu)
 
         self.root.config(menu=self.menu_bar)
 
-        # Text area
         text_frame = tk.Frame(self.root)
         text_frame.pack(expand=True, fill=tk.BOTH, padx=5, pady=5)
 
@@ -72,7 +68,6 @@ class FileEditor:
         )
         self.text_area.pack(expand=True, fill=tk.BOTH)
 
-        # Status bar
         self.status_bar = tk.Label(
             self.root,
             text=f"Ready - Logged in as: {self.current_user}",
