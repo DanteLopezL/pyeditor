@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 import platform
 import psutil
 
@@ -6,44 +7,154 @@ import psutil
 class AboutWindow:
     def __init__(self, master):
         self.master = master
-        master.title("System Information")
-        master.geometry("500x500")
+        self.master.title("Authentication Required")
+        self.master.geometry("400x500")
 
+        # Password configuration
+        self.correct_password = "1705"
+        self.entered_password = ""
+
+        # Main container
         self.main_frame = tk.Frame(master)
-        self.main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+        self.main_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
 
-        self.version_label = tk.Label(
+        # Password prompt
+        self.prompt_label = tk.Label(
+            self.main_frame,
+            text="Enter PIN to view system information:",
+            font=("Helvetica", 12),
+        )
+        self.prompt_label.pack(pady=10)
+
+        # Password display (shows * for each digit)
+        self.password_display = tk.Label(
+            self.main_frame, text="", font=("Helvetica", 24), width=10, relief=tk.SUNKEN
+        )
+        self.password_display.pack(pady=10)
+
+        # Numeric Keyboard
+        self.create_numeric_keyboard()
+
+        # Enter button
+        self.enter_btn = tk.Button(
+            self.main_frame,
+            text="ENTER",
+            font=("Helvetica", 12, "bold"),
+            command=self.check_password,
+            state=tk.DISABLED,
+        )
+        self.enter_btn.pack(pady=10, fill=tk.X)
+
+        # Clear button
+        self.clear_btn = tk.Button(
+            self.main_frame,
+            text="CLEAR",
+            font=("Helvetica", 10),
+            command=self.clear_password,
+        )
+        self.clear_btn.pack(fill=tk.X)
+
+    def create_numeric_keyboard(self):
+        # Button layout
+        buttons = [
+            ("1", "2", "3"),
+            ("4", "5", "6"),
+            ("7", "8", "9"),
+            ("", "0", "⌫"),  # ⌫ is backspace symbol
+        ]
+
+        # Create buttons
+        for row in buttons:
+            frame = tk.Frame(self.main_frame)
+            frame.pack(fill=tk.X)
+            for key in row:
+                if key == "":  # Empty space
+                    tk.Label(frame, width=5).pack(side=tk.LEFT, expand=True)
+                else:
+                    btn = tk.Button(
+                        frame,
+                        text=key,
+                        font=("Helvetica", 14),
+                        width=5,
+                        height=2,
+                        command=lambda k=key: self.on_key_press(k),
+                    )
+                    btn.pack(side=tk.LEFT, expand=True, padx=2, pady=2)
+
+    def on_key_press(self, key):
+        if key == "⌫":  # Backspace
+            self.entered_password = self.entered_password[:-1]
+        elif len(self.entered_password) < 4:  # Limit to 4 digits
+            self.entered_password += key
+
+        # Update display (show * for each digit)
+        self.password_display.config(text="*" * len(self.entered_password))
+
+        # Enable/disable enter button based on input length
+        self.enter_btn.config(
+            state=tk.NORMAL if len(self.entered_password) == 4 else tk.DISABLED
+        )
+
+    def clear_password(self):
+        self.entered_password = ""
+        self.password_display.config(text="")
+        self.enter_btn.config(state=tk.DISABLED)
+
+    def check_password(self):
+        if self.entered_password == self.correct_password:
+            self.show_system_info()
+        else:
+            messagebox.showerror("Access Denied", "Incorrect PIN")
+            self.clear_password()
+
+    def show_system_info(self):
+        # Clear the password interface
+        for widget in self.main_frame.winfo_children():
+            widget.destroy()
+
+        self.master.title("System Information")
+
+        # Version info
+        tk.Label(
             self.main_frame,
             text="File Editor v1.0.0\nOpen Source Project",
             font=("Helvetica", 12, "bold"),
-        )
-        self.version_label.pack(pady=5)
+        ).pack(pady=5)
 
-        self.info_label = tk.Label(
+        # System info text
+        tk.Label(
             self.main_frame, text=self.get_os_info(), justify=tk.LEFT, anchor="w"
-        )
-        self.info_label.pack(fill=tk.X, pady=10)
+        ).pack(fill=tk.X, pady=10)
 
-        self.charts_frame = tk.Frame(self.main_frame)
-        self.charts_frame.pack(fill=tk.BOTH, expand=True)
+        # Charts container
+        charts_frame = tk.Frame(self.main_frame)
+        charts_frame.pack(fill=tk.BOTH, expand=True)
 
-        self.ram_frame = tk.LabelFrame(self.charts_frame, text="RAM Usage")
-        self.ram_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5, pady=5)
+        # RAM Pie Chart
+        ram_frame = tk.LabelFrame(charts_frame, text="RAM Usage")
+        ram_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5, pady=5)
 
-        self.ram_canvas = tk.Canvas(self.ram_frame, width=200, height=200, bg="white")
+        self.ram_canvas = tk.Canvas(ram_frame, width=150, height=150, bg="white")
         self.ram_canvas.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
 
-        self.cpu_frame = tk.LabelFrame(self.charts_frame, text="CPU Usage")
-        self.cpu_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5, pady=5)
+        # CPU Pie Chart
+        cpu_frame = tk.LabelFrame(charts_frame, text="CPU Usage")
+        cpu_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5, pady=5)
 
-        self.cpu_canvas = tk.Canvas(self.cpu_frame, width=200, height=200, bg="white")
+        self.cpu_canvas = tk.Canvas(cpu_frame, width=150, height=150, bg="white")
         self.cpu_canvas.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
 
-        self.update_btn = tk.Button(
-            self.main_frame, text="Update", command=self.update_pie_charts
+        # Update button
+        tk.Button(self.main_frame, text="Refresh", command=self.update_pie_charts).pack(
+            pady=10
         )
-        self.update_btn.pack(pady=10)
 
+        # Close button
+        tk.Button(self.main_frame, text="Close", command=self.master.destroy).pack(
+            pady=5
+        )
+
+        # Initial update
         self.update_pie_charts()
 
     @staticmethod
@@ -133,3 +244,9 @@ class AboutWindow:
 
         cpu_percent = psutil.cpu_percent(interval=1)
         self.draw_pie_chart(self.cpu_canvas, cpu_percent, "CPU Usage")
+
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = AboutWindow(root)
+    root.mainloop()
