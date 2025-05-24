@@ -9,13 +9,12 @@ class FileEditor:
         self.root = root
         self.root.title("File Editor - Please Login")
         self.root.geometry("800x600")
-
         self.root.configure(bg="white")
 
         self.current_file = None
         self.current_user = None
 
-        self.root.withdraw()
+        self.root.withdraw()  # Hide main window until login is successful
 
         LoginWindow(self.root, self.on_login_success)
 
@@ -35,6 +34,8 @@ class FileEditor:
             widget.destroy()
 
         self.menu_bar = tk.Menu(self.root)
+
+        # File menu
         self.file_menu = tk.Menu(self.menu_bar, tearoff=0)
         self.file_menu.add_command(label="New", command=self.new_file)
         self.file_menu.add_command(label="Open", command=self.open_file)
@@ -44,13 +45,20 @@ class FileEditor:
         self.file_menu.add_command(label="Exit", command=self.root.quit)
         self.menu_bar.add_cascade(label="File", menu=self.file_menu)
 
+        # Account menu
         account_menu = tk.Menu(self.menu_bar, tearoff=0)
         account_menu.add_command(label="User Info", command=self.show_user_info)
         account_menu.add_command(label="Logout", command=self.logout)
         self.menu_bar.add_cascade(label="Account", menu=account_menu)
 
+        # Help menu
+        help_menu = tk.Menu(self.menu_bar, tearoff=0)
+        help_menu.add_command(label="About System", command=self.open_about_window)
+        self.menu_bar.add_cascade(label="Help", menu=help_menu)
+
         self.root.config(menu=self.menu_bar)
 
+        # Text area
         text_frame = tk.Frame(self.root)
         text_frame.pack(expand=True, fill=tk.BOTH, padx=5, pady=5)
 
@@ -64,6 +72,7 @@ class FileEditor:
         )
         self.text_area.pack(expand=True, fill=tk.BOTH)
 
+        # Status bar
         self.status_bar = tk.Label(
             self.root,
             text=f"Ready - Logged in as: {self.current_user}",
@@ -74,7 +83,6 @@ class FileEditor:
         self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
 
     def new_file(self):
-        """Create a new file"""
         if self.text_area.get(1.0, tk.END).strip():
             if messagebox.askyesno(
                 "New File", "Unsaved changes will be lost. Continue?"
@@ -88,18 +96,6 @@ class FileEditor:
             self.text_area.delete(1.0, tk.END)
             self.current_file = None
             self.status_bar.config(text=f"New file - Logged in as: {self.current_user}")
-
-    def show_user_info(self):
-        info = f"Current User: {self.current_user}\nCurrent File: {self.current_file or 'None'}"
-        messagebox.showinfo("User Information", info)
-
-    def logout(self):
-        if messagebox.askyesno("Logout", "Are you sure you want to logout?"):
-            self.root.withdraw()
-            self.current_user = None
-            self.current_file = None
-            self.root.config(menu=tk.Menu(self.root))
-            LoginWindow(self.root, self.on_login_success)
 
     def open_file(self):
         file_path = filedialog.askopenfilename(
@@ -153,3 +149,20 @@ class FileEditor:
         if file_path:
             self.current_file = file_path
             self.save_file()
+
+    def show_user_info(self):
+        info = f"Current User: {self.current_user}\nCurrent File: {self.current_file or 'None'}"
+        messagebox.showinfo("User Information", info)
+
+    def logout(self):
+        if messagebox.askyesno("Logout", "Are you sure you want to logout?"):
+            self.root.withdraw()
+            self.current_user = None
+            self.current_file = None
+            self.root.config(menu=tk.Menu(self.root))
+            LoginWindow(self.root, self.on_login_success)
+
+    def open_about_window(self):
+        about_root = tk.Toplevel(self.root)
+        about_root.title("About System")
+        AboutWindow(about_root)
