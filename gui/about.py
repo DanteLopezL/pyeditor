@@ -5,15 +5,15 @@ import psutil
 
 
 class AboutWindow:
-    def __init__(self, master):
-        self.master = master
-        self.master.title("Authentication Required")
-        self.master.geometry("400x500")
+    def __init__(self, parent):
+        self.parent = parent
+        self.parent.title("Authentication Required")
+        self.parent.geometry("400x500")
 
         self.correct_password = "1705"
         self.entered_password = ""
 
-        self.main_frame = tk.Frame(master)
+        self.main_frame = tk.Frame(parent)
         self.main_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
 
         self.prompt_label = tk.Label(
@@ -100,7 +100,7 @@ class AboutWindow:
         for widget in self.main_frame.winfo_children():
             widget.destroy()
 
-        self.master.title("System Information")
+        self.parent.title("System Information")
 
         tk.Label(
             self.main_frame,
@@ -131,7 +131,7 @@ class AboutWindow:
             pady=10
         )
 
-        tk.Button(self.main_frame, text="Close", command=self.master.destroy).pack(
+        tk.Button(self.main_frame, text="Close", command=self.parent.destroy).pack(
             pady=5
         )
 
