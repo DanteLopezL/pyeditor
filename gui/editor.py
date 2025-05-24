@@ -1,5 +1,6 @@
 from tkinter import scrolledtext, filedialog, messagebox
 from gui.login import LoginWindow
+from gui.about import AboutWindow
 import tkinter as tk
 
 
