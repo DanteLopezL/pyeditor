@@ -10,15 +10,12 @@ class AboutWindow:
         self.master.title("Authentication Required")
         self.master.geometry("400x500")
 
-        # Password configuration
         self.correct_password = "1705"
         self.entered_password = ""
 
-        # Main container
         self.main_frame = tk.Frame(master)
         self.main_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
 
-        # Password prompt
         self.prompt_label = tk.Label(
             self.main_frame,
             text="Enter PIN to view system information:",
@@ -26,16 +23,13 @@ class AboutWindow:
         )
         self.prompt_label.pack(pady=10)
 
-        # Password display (shows * for each digit)
         self.password_display = tk.Label(
             self.main_frame, text="", font=("Helvetica", 24), width=10, relief=tk.SUNKEN
         )
         self.password_display.pack(pady=10)
 
-        # Numeric Keyboard
         self.create_numeric_keyboard()
 
-        # Enter button
         self.enter_btn = tk.Button(
             self.main_frame,
             text="ENTER",
@@ -45,7 +39,6 @@ class AboutWindow:
         )
         self.enter_btn.pack(pady=10, fill=tk.X)
 
-        # Clear button
         self.clear_btn = tk.Button(
             self.main_frame,
             text="CLEAR",
@@ -55,20 +48,18 @@ class AboutWindow:
         self.clear_btn.pack(fill=tk.X)
 
     def create_numeric_keyboard(self):
-        # Button layout
         buttons = [
             ("1", "2", "3"),
             ("4", "5", "6"),
             ("7", "8", "9"),
-            ("", "0", "⌫"),  # ⌫ is backspace symbol
+            ("", "0", "⌫"),
         ]
 
-        # Create buttons
         for row in buttons:
             frame = tk.Frame(self.main_frame)
             frame.pack(fill=tk.X)
             for key in row:
-                if key == "":  # Empty space
+                if key == "":
                     tk.Label(frame, width=5).pack(side=tk.LEFT, expand=True)
                 else:
                     btn = tk.Button(
@@ -82,15 +73,13 @@ class AboutWindow:
                     btn.pack(side=tk.LEFT, expand=True, padx=2, pady=2)
 
     def on_key_press(self, key):
-        if key == "⌫":  # Backspace
+        if key == "⌫":
             self.entered_password = self.entered_password[:-1]
-        elif len(self.entered_password) < 4:  # Limit to 4 digits
+        elif len(self.entered_password) < 4:
             self.entered_password += key
 
-        # Update display (show * for each digit)
         self.password_display.config(text="*" * len(self.entered_password))
 
-        # Enable/disable enter button based on input length
         self.enter_btn.config(
             state=tk.NORMAL if len(self.entered_password) == 4 else tk.DISABLED
         )
@@ -108,53 +97,44 @@ class AboutWindow:
             self.clear_password()
 
     def show_system_info(self):
-        # Clear the password interface
         for widget in self.main_frame.winfo_children():
             widget.destroy()
 
         self.master.title("System Information")
 
-        # Version info
         tk.Label(
             self.main_frame,
             text="File Editor v1.0.0\nOpen Source Project",
             font=("Helvetica", 12, "bold"),
         ).pack(pady=5)
 
-        # System info text
         tk.Label(
             self.main_frame, text=self.get_os_info(), justify=tk.LEFT, anchor="w"
         ).pack(fill=tk.X, pady=10)
 
-        # Charts container
         charts_frame = tk.Frame(self.main_frame)
         charts_frame.pack(fill=tk.BOTH, expand=True)
 
-        # RAM Pie Chart
         ram_frame = tk.LabelFrame(charts_frame, text="RAM Usage")
         ram_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5, pady=5)
 
         self.ram_canvas = tk.Canvas(ram_frame, width=150, height=150, bg="white")
         self.ram_canvas.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
 
-        # CPU Pie Chart
         cpu_frame = tk.LabelFrame(charts_frame, text="CPU Usage")
         cpu_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5, pady=5)
 
         self.cpu_canvas = tk.Canvas(cpu_frame, width=150, height=150, bg="white")
         self.cpu_canvas.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
 
-        # Update button
         tk.Button(self.main_frame, text="Refresh", command=self.update_pie_charts).pack(
             pady=10
         )
 
-        # Close button
         tk.Button(self.main_frame, text="Close", command=self.master.destroy).pack(
             pady=5
         )
 
-        # Initial update
         self.update_pie_charts()
 
     @staticmethod
