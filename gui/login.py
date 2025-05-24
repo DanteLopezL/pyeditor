@@ -1,6 +1,6 @@
 from tkinter import messagebox
 import tkinter as tk
-from db import Database
+from db.db import Database
 
 
 class LoginWindow:
