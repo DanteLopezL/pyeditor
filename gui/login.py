@@ -16,60 +16,44 @@ class LoginWindow:
         self.window.geometry("400x350")
         self.window.resizable(False, False)
 
-        # More aggressive Mac-specific fixes
         self.window.configure(bg="#f0f0f0")
 
-        # Force immediate update before doing anything else
         self.window.update()
 
-        # Multiple techniques to ensure visibility on Mac
         self.window.lift()
         self.window.focus_force()
         self.window.attributes("-topmost", True)
 
-        # Set grab after window is properly configured
         self.window.grab_set()
 
-        # Remove topmost after a delay
         self.window.after(500, lambda: self.window.attributes("-topmost", False))
 
-        # Center the window with immediate effect
         self.center_window()
 
-        # Force another update
         self.window.update_idletasks()
 
-        # Create widgets immediately but with forced updates
         self.create_widgets()
 
     def center_window(self):
-        # Force update before calculating positions
         self.window.update_idletasks()
 
-        # Get actual screen dimensions
         screen_width = self.window.winfo_screenwidth()
         screen_height = self.window.winfo_screenheight()
 
-        # Calculate center position
         x = (screen_width - 400) // 2
         y = (screen_height - 350) // 2
 
-        # Set geometry and force update
         self.window.geometry(f"400x350+{x}+{y}")
         self.window.update()
 
     def create_widgets(self):
-        # Force immediate background color
         self.window.configure(bg="#f0f0f0")
 
-        # Main container with explicit background
         main_frame = tk.Frame(self.window, bg="#f0f0f0", padx=30, pady=30)
         main_frame.pack(fill=tk.BOTH, expand=True)
 
-        # Force frame update
         main_frame.update()
 
-        # Title with explicit styling
         title_label = tk.Label(
             main_frame,
             text="File Editor Login",
@@ -79,11 +63,9 @@ class LoginWindow:
         )
         title_label.pack(pady=(0, 20))
 
-        # Form frame with background
         form_frame = tk.Frame(main_frame, bg="#f0f0f0")
         form_frame.pack()
 
-        # Username section
         tk.Label(
             form_frame, text="Username:", font=("Arial", 12), bg="#f0f0f0", fg="#333333"
         ).pack(pady=5, anchor=tk.W)
@@ -92,7 +74,6 @@ class LoginWindow:
         )
         self.username_entry.pack(pady=5)
 
-        # Password section
         tk.Label(
             form_frame, text="Password:", font=("Arial", 12), bg="#f0f0f0", fg="#333333"
         ).pack(pady=5, anchor=tk.W)
@@ -101,11 +82,9 @@ class LoginWindow:
         )
         self.password_entry.pack(pady=5)
 
-        # Buttons frame
         button_frame = tk.Frame(main_frame, bg="#f0f0f0")
         button_frame.pack(pady=20)
 
-        # Buttons with explicit styling
         login_btn = tk.Button(
             button_frame,
             text="Login",
@@ -132,7 +111,6 @@ class LoginWindow:
         )
         register_btn.pack(side=tk.LEFT, padx=5)
 
-        # Status label with background
         self.status_label = tk.Label(
             main_frame,
             text="Enter your credentials",
@@ -142,7 +120,6 @@ class LoginWindow:
         )
         self.status_label.pack(pady=10)
 
-        # Instructions
         instructions = tk.Label(
             main_frame,
             text="New user? Click Register to create an account.",
@@ -152,14 +129,11 @@ class LoginWindow:
         )
         instructions.pack(pady=(10, 0))
 
-        # Key bindings
         self.window.bind("<Return>", lambda e: self.login())
         self.window.bind("<Escape>", lambda e: self.window.quit())
 
-        # Focus and final updates
         self.username_entry.focus_set()
 
-        # Multiple forced updates to ensure rendering
         self.window.update()
         main_frame.update()
         self.window.update_idletasks()
