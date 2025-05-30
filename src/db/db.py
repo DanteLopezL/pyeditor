@@ -21,7 +21,7 @@ class Database:
         conn.commit()
         conn.close()
 
-    def hash_password(self, password):
+    def hash_password(self, password: str):
         return hashlib.sha256(password.encode()).hexdigest()
 
     def create_user(self, username, password):
